@@ -42,6 +42,7 @@
       },
       'conditions': [
         ['OS=="mac"', { 'cflags+': ['-fvisibility=hidden'] }],
+        ['OS=="aix"', { 'defines': ['__AIX__'] }],
         ['_type!="static_library" and ARCH=="arm64"', {
           'xcode_settings': {
             "OTHER_CFLAGS": [
@@ -54,14 +55,14 @@
             ]
           }
         }],
-        ['OS=="mac" or OS=="linux"', {
+        ['OS=="mac" or OS=="linux" or OS=="aix"', {
           'sources': [
             'src/unix/base64.cc',
             'src/unix/kerberos_gss.cc',
             'src/unix/kerberos_unix.cc'
           ]
         }],
-        ['(OS=="mac") or (OS=="linux" and kerberos_use_rtld!="true")', {
+        ['(OS=="mac") or ((OS=="linux" or OS=="aix") and kerberos_use_rtld!="true")', {
           'link_settings': {
             'libraries': [
               '-lkrb5',
@@ -78,7 +79,7 @@
             }]
           ]
         }],
-        ['(OS=="linux") and (kerberos_use_rtld=="true")', {
+        ['(OS=="linux" or OS=="aix") and (kerberos_use_rtld=="true")', {
           'defines': ['KERBEROS_USE_RTLD=1'],
           'link_settings': {
             'libraries': [
